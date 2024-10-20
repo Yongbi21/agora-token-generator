@@ -1,0 +1,21 @@
+{
+    "name": "aj/agora-token-generator",
+    "description": "Token generator for videocall",
+    "autoload": {
+        "psr-4": {
+            "Aj\\AgoraTokenGenerator\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Yongbi21",
+            "email": "111903577+Yongbi21@users.noreply.github.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.6",
+        "slim/slim": "^4.14",
+        "slim/psr7": "^1.6",
+        "monolog/monolog": "^2.9"
+    }
+}
