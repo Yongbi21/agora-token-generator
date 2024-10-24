@@ -39,7 +39,7 @@ try {
 
     // Return the token in JSON format
     echo json_encode([
-        'status' => 'Success',
+        'Status' => 'Success',
         'token' => $token,
         'uid' => $uid,
         'appId' => $appID,
@@ -49,7 +49,7 @@ try {
 } catch (Exception $e) {
     http_response_code(400);
     echo json_encode([
-        'status' => 'error',
+        'Status' => 'error',
         'message' => $e->getMessage()
     ]);
 }
