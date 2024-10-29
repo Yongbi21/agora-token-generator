@@ -1,40 +1,24 @@
 <?php
-require 'vendor/autoload.php';
-require_once('RtcTokenBuilder.php');
-require_once('token_generator.php');  // This now includes both classes
-use Dotenv\Dotenv;
+require_once(__DIR__ . '/RtcTokenBuilder.php');
+require_once(__DIR__ . '/AccessToken.php');
+require_once(__DIR__ . '/Util.php');
+ // Contains Util class
 
-// Load .env file
-$dotenv = Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+// Your Agora credentials
+$appID = "1e5d6e4a701949f684dd61a3f86f6e56";
+$appCertificate = "10844f8702824ee09ef45d14bb280ab0";
+$channelName = $_GET['channelName'] ?? "test_channel"; // Channel name (can be passed as query parameter)
+$uid = $_GET['uid'] ?? 0; // User ID, default is 0
+$role = RtcTokenBuilder::RolePublisher; // Set user role
+$privilegeExpireTime = 3600; // Token valid for 1 hour
 
-// Set headers
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, GET');
-header('Access-Control-Allow-Headers: Content-Type');
+// Calculate privilege expiration timestamp (current time + privilege expiration time)
+$privilegeExpireTs = time() + $privilegeExpireTime;
 
+// Generate token
 try {
-    $tokenManager = new AgoraTokenManager();
-    
-    // Get parameters from the request
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $data = json_decode(file_get_contents('php://input'), true);
-        $channelName = $data['channelName'] ?? null;
-        $uid = $data['uid'] ?? null;
-    } else {
-        $channelName = $_GET['channelName'] ?? null;
-        $uid = $_GET['uid'] ?? null;
-    }
-    
-    // Get token and channel name
-    $result = $tokenManager->getToken($channelName, $uid);
-    
-    echo json_encode($result);
+    $token = RtcTokenBuilder::buildTokenWithUid($appID, $appCertificate, $channelName, $uid, $role, $privilegeExpireTs);
+    echo json_encode(["token" => $token]);
 } catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode([
-        'status' => 'error',
-        'message' => $e->getMessage()
-    ]);
+    echo json_encode(["error" => $e->getMessage()]);
 }
